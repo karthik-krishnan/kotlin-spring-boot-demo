@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment                                          # 1
+metadata:
+  name: authorapp-deployment
+spec:
+  replicas: 2                                             # 2
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate                                   # 3
+    rollingUpdate:
+      maxUnavailable: 1                                   # 4
+      maxSurge: 1                                         # 5
+  template:                                               # 6
+    metadata:
+      labels:
+        app: lbl-author                                   # 7
+    spec:
+      containers:
+        - image: authorapp:latest
+          imagePullPolicy: Never                         # 8
+          name: authorapp
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: /usr/app/datafiles
+              name: authorapp-volume
+      volumes:
+        - name: authorapp-volume
+          persistentVolumeClaim:
+            claimName: authorapp-volume-claim

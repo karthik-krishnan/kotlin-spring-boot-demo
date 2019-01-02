@@ -10,7 +10,12 @@ class AuthorRepository(val applicationProperties: ApplicationProperties) {
 
     fun getAuthorsFromStore(): MutableList<Author> {
         var authors = mutableListOf<Author>()
-        File(applicationProperties.datafilePath + "/authors.txt").forEachLine {
+        val file = File(applicationProperties.datafilePath + "/authors.txt")
+
+        if (!file.exists())
+            return authors
+
+        file.forEachLine {
             if (it.trim().isNotEmpty()) {
                 val values = it.split(",")
                 authors.add(Author(values[0], values[1].trim().toInt()))
